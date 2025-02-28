@@ -13,6 +13,7 @@ const AddVideoForm: React.FunctionComponent = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [showCaption, setShowCaption] = useState(false);
   const [videoList, setVideoList] = useState<TVideo[]>([]);
+  const [startVideo, setStartVideo] = useState<Boolean>(false);
 
   let interval: NodeJS.Timeout | null = null;
 
@@ -31,13 +32,7 @@ const AddVideoForm: React.FunctionComponent = () => {
         endTime,
       },
     ]);
-    setUrl("");
-    setVideoUrl("");
-    setCaption("");
-    setStartTime(0);
-    setEndTime(0);
-    setCurrentTime(0);
-    setShowCaption(false);
+    setStartVideo(true);
   };
 
   const handleCaptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -66,7 +61,7 @@ const AddVideoForm: React.FunctionComponent = () => {
   };
 
   useEffect(() => {
-    if (videoUrl) {
+    if (videoUrl && startVideo) {
       interval = setInterval(() => {
         setCurrentTime((prevTime) => prevTime + 1);
       }, 1000);
@@ -75,78 +70,105 @@ const AddVideoForm: React.FunctionComponent = () => {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [videoUrl]);
+  }, [startVideo]);
 
   useEffect(() => {
-    setShowCaption(currentTime >= startTime && currentTime <= endTime);
-  }, [currentTime, startTime, endTime]);
+    if (startTime > endTime && startVideo) {
+      alert("Time is wrong");
+    } else {
+      setShowCaption(currentTime >= startTime && currentTime <= endTime);
+    }
+  }, [currentTime, startTime, endTime, startVideo]);
+
+  const handleReset = () => {
+    setUrl("");
+    setVideoUrl("");
+    setCaption("");
+    setStartTime(0);
+    setEndTime(0);
+    setCurrentTime(0);
+    setShowCaption(false);
+  };
 
   return (
-    <div className="form_video_wrapper">
-      <Form onSubmit={handleSubmit} className="add_video_form">
-        <div className="inputs">
-          <span>Video URL: </span>
-          <input
-            type="url"
-            name="video_url"
-            placeholder="Paste Video URL"
-            required
-            value={url}
-            onChange={handleChange}
-          />
-        </div>
-        <button type="button" onClick={handleVideoUrl}>
-          Show Video Preview
-        </button>
-        <div className="inputs">
-          <span>Caption: </span>
-          <textarea
-            name="caption"
-            placeholder="Write Caption"
-            required
-            value={caption}
-            onChange={handleCaptionChange}
-          />
-        </div>
-        <div className="inputs_time_wrapper">
+    <>
+      <div className="form_video_wrapper">
+        <Form onSubmit={handleSubmit} className="add_video_form">
           <div className="inputs">
-            <span>Start Time: </span>
+            <span>Video URL: </span>
             <input
-              type="text"
-              name="start_time"
-              placeholder="Enter time in Seconds"
+              type="url"
+              name="video_url"
+              placeholder="Paste Video URL"
               required
-              value={startTime}
-              onChange={handleStartTimeChange}
+              value={url}
+              onChange={handleChange}
             />
           </div>
+          <button type="button" onClick={handleVideoUrl}>
+            Show Video Preview
+          </button>
           <div className="inputs">
-            <span>End Time: </span>
-            <input
-              type="text"
-              name="end_time"
-              placeholder="Enter time in Seconds"
+            <span>Caption: </span>
+            <textarea
+              name="caption"
+              placeholder="Write Caption"
               required
-              value={endTime}
-              onChange={handleEndTimeChange}
+              value={caption}
+              onChange={handleCaptionChange}
             />
           </div>
-        </div>
-        <button type="submit">Add Caption</button>
-      </Form>
+          <div className="inputs_time_wrapper">
+            <div className="inputs">
+              <span>Start Time: </span>
+              <input
+                type="text"
+                name="start_time"
+                placeholder="Enter time in Seconds"
+                required
+                value={startTime}
+                onChange={handleStartTimeChange}
+              />
+            </div>
+            <div className="inputs">
+              <span>End Time: </span>
+              <input
+                type="text"
+                name="end_time"
+                placeholder="Enter time in Seconds"
+                required
+                value={endTime}
+                onChange={handleEndTimeChange}
+              />
+            </div>
+          </div>
+          <button type="submit">Add Caption</button>
+          <button type="reset" onClick={handleReset}>
+            Reset
+          </button>
+        </Form>
 
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-        }}
-      >
-        <iframe
-          src={videoUrl === "" ? `${thumbnail}` : `${videoUrl}`}
-          referrerPolicy="strict-origin-when-cross-origin"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        ></iframe>
-        {caption && (
+        <div
+          style={{
+            position: "relative",
+            width: "50%",
+          }}
+        >
+          {videoUrl === "" ? (
+            <img
+              src={`${thumbnail}`}
+              style={{
+                width: "100%",
+              }}
+            />
+          ) : (
+            <iframe
+              src={`${videoUrl}`}
+              referrerPolicy="strict-origin-when-cross-origin"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            ></iframe>
+          )}
+
           <div
             className="video_caption"
             style={{
@@ -154,24 +176,31 @@ const AddVideoForm: React.FunctionComponent = () => {
               bottom: "30%",
               left: "50%",
               padding: "5px 10px",
-              backgroundColor: "rgba(0, 0, 0, 0.6)",
+              // visibility: `${showCaption ? "visible" : "hidden"}`,
               color: "#fff",
               borderRadius: "4px",
             }}
           >
             {showCaption && caption}
           </div>
-        )}
+        </div>
       </div>
-
-      {videoList.map((item) => {
-        return (
-          <>
-            {item.caption} {item.startTime} {item.endTime}
-          </>
-        );
-      })}
-    </div>
+      <div className="list_name">
+        <h3>Caption List</h3>
+        <ul>
+          {videoList.map((item) => {
+            return (
+              <li>
+                <h5>Caption: </h5> <p>{item.caption}</p>
+                <h5>Start Time: </h5> <p>{item.startTime}</p>
+                <h5>End Time: </h5>
+                <p>{item.endTime}</p>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </>
   );
 };
 

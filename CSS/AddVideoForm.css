@@ -42,3 +42,11 @@ iframe {
   width: 100%;
   height: 100%;
 }
+
+.list_name{
+  padding: 1rem;
+}
+
+.list_name li{
+  margin: 1rem;
+}
