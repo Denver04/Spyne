@@ -1,0 +1,43 @@
+.add_video_form {
+  width: 100%;
+}
+
+.inputs {
+  display: flex;
+  max-width: 70%;
+  flex-direction: column;
+  overflow-x: overlay;
+  gap: 0.5rem;
+  margin: 1rem;
+}
+.add_video_form button {
+  border: none;
+  padding: 1rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  margin: 0 1rem;
+}
+
+.inputs_time_wrapper {
+  display: flex;
+  width: 100%;
+}
+
+input,
+textarea {
+  padding: 12px;
+  border: none;
+  background-color: aliceblue;
+  border-radius: 8px;
+}
+
+.form_video_wrapper {
+  display: flex;
+  width: 90%;
+  margin: 2rem;
+  justify-content: space-between;
+}
+
+iframe {
+  width: 100%;
+}
