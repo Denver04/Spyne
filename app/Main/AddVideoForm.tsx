@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form } from "react-router";
 import "../../CSS/AddVideoForm.css";
+import thumbnail from "../../public/thumbnail.png";
 import type { TVideo } from "~/Types/Video";
 
 const AddVideoForm: React.FunctionComponent = () => {
@@ -133,40 +134,35 @@ const AddVideoForm: React.FunctionComponent = () => {
         </div>
         <button type="submit">Add Caption</button>
       </Form>
-      {videoUrl === "" ? (
-        <></>
-      ) : (
-        <div
-          style={{
-            position: "relative",
-            width: "100%",
-          }}
-        >
-          <iframe
-            width="420"
-            height="315"
-            src={`${videoUrl}`}
-            referrerPolicy="strict-origin-when-cross-origin"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          ></iframe>
-          {caption && (
-            <div
-              className="video_caption"
-              style={{
-                position: "absolute",
-                bottom: "30%",
-                left: "50%",
-                padding: "5px 10px",
-                backgroundColor: "rgba(0, 0, 0, 0.6)",
-                color: "#fff",
-                borderRadius: "4px",
-              }}
-            >
-              {showCaption && caption}
-            </div>
-          )}
-        </div>
-      )}
+
+      <div
+        style={{
+          position: "relative",
+          width: "100%",
+        }}
+      >
+        <iframe
+          src={videoUrl === "" ? `${thumbnail}` : `${videoUrl}`}
+          referrerPolicy="strict-origin-when-cross-origin"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        ></iframe>
+        {caption && (
+          <div
+            className="video_caption"
+            style={{
+              position: "absolute",
+              bottom: "30%",
+              left: "50%",
+              padding: "5px 10px",
+              backgroundColor: "rgba(0, 0, 0, 0.6)",
+              color: "#fff",
+              borderRadius: "4px",
+            }}
+          >
+            {showCaption && caption}
+          </div>
+        )}
+      </div>
 
       {videoList.map((item) => {
         return (
