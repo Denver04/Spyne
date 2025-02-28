@@ -1,12 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form } from "react-router";
 import "../../CSS/AddVideoForm.css";
-import type { VideoProps } from "~/Types/Video";
 
-const AddVideoForm: React.FunctionComponent<VideoProps> = (list) => {
+const AddVideoForm: React.FunctionComponent = () => {
   const [url, setUrl] = useState<string>("");
   const [caption, setCaption] = useState<string>("");
   const [videoUrl, setVideoUrl] = useState<string>("");
+  const [startTime, setStartTime] = useState<number>(0);
+  const [endTime, setEndTime] = useState<number>(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [showCaption, setShowCaption] = useState(false);
+
+
+  let interval: NodeJS.Timeout | null = null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value);
@@ -14,6 +20,14 @@ const AddVideoForm: React.FunctionComponent<VideoProps> = (list) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    setUrl("");
+    setVideoUrl("");
+    setCaption("");
+    setStartTime(0);
+    setEndTime(0);
+    setCurrentTime(0);
+    setShowCaption(false);
   };
 
   const handleCaptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -32,6 +46,30 @@ const AddVideoForm: React.FunctionComponent<VideoProps> = (list) => {
       alert("Invalid YouTube URL!");
     }
   };
+
+  const handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setStartTime(Number(e.target.value));
+  };
+
+  const handleEndTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEndTime(Number(e.target.value));
+  };
+
+  useEffect(() => {
+    if (videoUrl) {
+      interval = setInterval(() => {
+        setCurrentTime((prevTime) => prevTime + 1);
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [videoUrl]);
+
+  useEffect(() => {
+    setShowCaption(currentTime >= startTime && currentTime <= endTime);
+  }, [currentTime, startTime, endTime]);
 
   return (
     <div className="form_video_wrapper">
@@ -64,30 +102,37 @@ const AddVideoForm: React.FunctionComponent<VideoProps> = (list) => {
           <div className="inputs">
             <span>Start Time: </span>
             <input
-              type="time"
+              type="text"
               name="start_time"
-              placeholder="In Seconds"
+              placeholder="Enter time in Seconds"
               required
+              value={startTime}
+              onChange={handleStartTimeChange}
             />
           </div>
           <div className="inputs">
             <span>End Time: </span>
             <input
-              type="time"
+              type="text"
               name="end_time"
-              placeholder="In Seconds"
+              placeholder="Enter time in Seconds"
               required
+              value={endTime}
+              onChange={handleEndTimeChange}
             />
           </div>
         </div>
-        <button type="submit">Add</button>
+        <button type="submit">Add Caption</button>
       </Form>
       {videoUrl === "" ? (
         <></>
       ) : (
-        <div style={{
-            position: "relative"
-        }}>
+        <div
+          style={{
+            position: "relative",
+            width: "100%",
+          }}
+        >
           <iframe
             width="420"
             height="315"
@@ -108,11 +153,12 @@ const AddVideoForm: React.FunctionComponent<VideoProps> = (list) => {
                 borderRadius: "4px",
               }}
             >
-              {caption}
+              {showCaption && caption}
             </div>
           )}
         </div>
       )}
+
     </div>
   );
 };
