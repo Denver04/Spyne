@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form } from "react-router";
 import "../../CSS/AddVideoForm.css";
+import type { TVideo } from "~/Types/Video";
 
 const AddVideoForm: React.FunctionComponent = () => {
   const [url, setUrl] = useState<string>("");
@@ -10,7 +11,7 @@ const AddVideoForm: React.FunctionComponent = () => {
   const [endTime, setEndTime] = useState<number>(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [showCaption, setShowCaption] = useState(false);
-
+  const [videoList, setVideoList] = useState<TVideo[]>([]);
 
   let interval: NodeJS.Timeout | null = null;
 
@@ -20,7 +21,15 @@ const AddVideoForm: React.FunctionComponent = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+    setVideoList((prev) => [
+      ...prev,
+      {
+        url,
+        caption,
+        startTime,
+        endTime,
+      },
+    ]);
     setUrl("");
     setVideoUrl("");
     setCaption("");
@@ -159,6 +168,13 @@ const AddVideoForm: React.FunctionComponent = () => {
         </div>
       )}
 
+      {videoList.map((item) => {
+        return (
+          <>
+            {item.caption} {item.startTime} {item.endTime}
+          </>
+        );
+      })}
     </div>
   );
 };
