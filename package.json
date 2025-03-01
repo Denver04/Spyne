@@ -17,6 +17,7 @@
     "react-dom": "^19.0.0",
     "react-router": "^7.2.0",
     "react-youtube": "^10.1.0",
+    "redux": "^5.0.1",
     "video-react": "^0.16.0",
     "video.js": "^8.21.0",
     "videojs-youtube": "^3.0.1",
