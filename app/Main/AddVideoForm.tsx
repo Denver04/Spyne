@@ -23,16 +23,25 @@ const AddVideoForm: React.FunctionComponent = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setVideoList((prev) => [
-      ...prev,
-      {
-        url,
-        caption,
-        startTime,
-        endTime,
-      },
-    ]);
-    setStartVideo(true);
+
+    if (startTime > endTime) {
+      alert("Time is wrong");
+      setShowCaption(false);
+      setStartTime(0);
+      setEndTime(0);
+    } else {
+      setStartVideo(true);
+      setShowCaption(true);
+      setVideoList((prev) => [
+        ...prev,
+        {
+          url,
+          caption,
+          startTime,
+          endTime,
+        },
+      ]);
+    }
   };
 
   const handleCaptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -72,12 +81,17 @@ const AddVideoForm: React.FunctionComponent = () => {
     };
   }, [startVideo]);
 
+  // useEffect(() => {
+  //   if (startTime > endTime && startVideo) {
+  //     alert("Time is wrong");
+  //     setShowCaption(false);
+  //     setStartTime(0);
+  //     setEndTime(0);
+  //   }
+  // }, [startTime, endTime]);
+
   useEffect(() => {
-    if (startTime > endTime && startVideo) {
-      alert("Time is wrong");
-    } else {
-      setShowCaption(currentTime >= startTime && currentTime <= endTime);
-    }
+    setShowCaption(currentTime >= startTime && currentTime <= endTime);
   }, [currentTime, startTime, endTime, startVideo]);
 
   const handleReset = () => {

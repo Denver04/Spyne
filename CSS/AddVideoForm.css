@@ -43,10 +43,15 @@ iframe {
   height: 100%;
 }
 
-.list_name{
+.list_name {
   padding: 1rem;
 }
 
-.list_name li{
+.list_name li {
   margin: 1rem;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: flex-start;
 }
